@@ -1133,34 +1133,30 @@ public class ApiClient {
         } else {
             request = reqBuilder.method(method, reqBody).build();
         }
-        
+
         try {
             final Buffer buffer = new Buffer();
-			request.newBuilder().build().body().writeTo(buffer);
-	        SecretKeySpec keySpec = new SecretKeySpec(
-	        		decodeHexString(this.applicationKey.toLowerCase()),
-	                "HmacMD5");
-	        Mac mac = Mac.getInstance("HmacMD5");
-			mac.init(keySpec);
-	        byte[] result = mac.doFinal(buffer.readByteArray());
-	        String signature = encodeHexString(result);
-	        String signatureHeader = "signer="+this.applicationId+"; signature="+signature;
-	        System.out.println("url "+request.urlString());
-	        System.out.println("hmac: "+signature);
-	        System.out.println("Content-Signature: "+signatureHeader);
-	        
-	        request = request.newBuilder().addHeader("Content-Signature", signatureHeader).build();
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		} catch (InvalidKeyException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-        
+            request.newBuilder().build().body().writeTo(buffer);
+            SecretKeySpec keySpec = new SecretKeySpec(
+                    decodeHexString(this.applicationKey.toLowerCase()),
+                    "HmacMD5");
+            Mac mac = Mac.getInstance("HmacMD5");
+            mac.init(keySpec);
+            byte[] result = mac.doFinal(buffer.readByteArray());
+            String signature = encodeHexString(result);
+            String signatureHeader = "signer="+this.applicationId+"; signature="+signature;
+            request = request.newBuilder().addHeader("Content-Signature", signatureHeader).build();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         return httpClient.newCall(request);
     }
-    
+
     private byte[] decodeHexString(String hex) {
         String[] list=hex.split("(?<=\\G.{2})");
         ByteBuffer buffer= ByteBuffer.allocate(list.length);
@@ -1168,7 +1164,7 @@ public class ApiClient {
         for(String str: list)
             buffer.put((byte)(Integer.parseInt(str,16)));
         return buffer.array();
-	}
+    }
     private String encodeHexString(byte[] in) {
         final StringBuilder builder = new StringBuilder();
         for(byte b : in) {
