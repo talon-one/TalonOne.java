@@ -1160,7 +1160,6 @@ public class ApiClient {
     private byte[] decodeHexString(String hex) {
         String[] list=hex.split("(?<=\\G.{2})");
         ByteBuffer buffer= ByteBuffer.allocate(list.length);
-        System.out.println(list.length);
         for(String str: list)
             buffer.put((byte)(Integer.parseInt(str,16)));
         return buffer.array();
