@@ -202,6 +202,10 @@ class DateTimeTypeAdapter extends TypeAdapter<DateTime> {
                 return null;
             default:
                 String date = in.nextString();
+                if (date.equals("0001-01-01T00:00:00Z")) {
+                    // explicitly convert to ISO8601 format date in case of empty "golang" string
+                    date = "0001-01-01T00:00:00.000+0000";
+                }
                 return formatter.parseDateTime(date);
         }
     }
@@ -231,6 +235,10 @@ class LocalDateTypeAdapter extends TypeAdapter<LocalDate> {
                 return null;
             default:
                 String date = in.nextString();
+                if (date.equals("0001-01-01T00:00:00Z")) {
+                    // explicitly convert to ISO8601 format date in case of empty "golang" string
+                    date = "0001-01-01T00:00:00.000+0000";
+                }
                 return formatter.parseLocalDate(date);
         }
     }
